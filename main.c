@@ -7,30 +7,38 @@
 int main();
 
 void stringLengthValidation(int maxLength, char *string);
-int stringExistenceValidation(char *filePath, char *string);
+int stringExistenceValidation(char *filePath, char *string, int charToCompare);
 
 int main(){
 
-    stringExistenceValidation("Resources/People", "string");
+    char validationNumber[INPUT_BUFFER];
+    char candidateNumber[INPUT_BUFFER];
 
-    // char validationNumber[30];
-    // char candidateNumber[10];
+    printf("Enter your validation number:\n");
+    fgets(validationNumber, sizeof(validationNumber), stdin);
 
-    // printf("Enter your validation number:\n");
-    // fgets(validationNumber, sizeof(validationNumber), stdin);
+    if(validationNumber[strlen(validationNumber)] == '\n'){
+        getchar();
+    }
+    stringLengthValidation(14, validationNumber);
 
-    // if(validationNumber[strlen(validationNumber)] == '\n'){
-    //     getchar();
-    // }
-    // stringLengthValidation(14, validationNumber);
+    if(stringExistenceValidation("Resources/People", validationNumber, 13) != 0){
+        fprintf(stderr, "ID not found...\n");
+        exit(EXIT_FAILURE);
+    }
 
-    // printf("\nEnter the number of your candidate:\n");
-    // fgets(candidateNumber, sizeof(candidateNumber), stdin);
+    printf("\nEnter the number of your candidate:\n");
+    fgets(candidateNumber, sizeof(candidateNumber), stdin);
 
-    // if(candidateNumber[strlen(candidateNumber)] == '\n'){
-    //     getchar();
-    // }
-    // stringLengthValidation(3, candidateNumber);
+    if(candidateNumber[strlen(candidateNumber)] == '\n'){
+        getchar();
+    }
+    stringLengthValidation(5, candidateNumber);
+
+    if(stringExistenceValidation("Resources/Candidates", candidateNumber, 4) != 0){
+        fprintf(stderr, "Candidate not found...\n");
+        exit(EXIT_FAILURE);
+    }
 
     exit(EXIT_SUCCESS);
 }
@@ -42,7 +50,7 @@ void stringLengthValidation(int maxLength, char *string){
     }
 }
 
-int stringExistenceValidation(char *filePath, char *string){
+int stringExistenceValidation(char *filePath, char *string, int charToCompare){
     FILE *file;
     file = fopen(filePath, "r");
     if(file == NULL){
@@ -51,7 +59,7 @@ int stringExistenceValidation(char *filePath, char *string){
     }
     
     char *token;
-    char *data[3];
+    char *data[4];
     int i;
     char buffer[INPUT_BUFFER];
 
@@ -61,9 +69,13 @@ int stringExistenceValidation(char *filePath, char *string){
         
         while(token != NULL){
             data[i] = token;
-            printf("%s\n", token);
             token = strtok(NULL, ",");
             i++;
         }
+        if(strncmp(data[2], string, charToCompare) == 0){
+            return 0;
+        }
     }
+
+    return 1;
 }
