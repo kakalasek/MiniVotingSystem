@@ -8,37 +8,40 @@ int main();
 
 void stringLengthValidation(int maxLength, char *string);
 int stringExistenceValidation(char *filePath, char *string, int charToCompare);
+void vote(char *validationNumber, char *candidateNumber);
 
 int main(){
 
     char validationNumber[INPUT_BUFFER];
     char candidateNumber[INPUT_BUFFER];
 
-    printf("Enter your validation number:\n");
-    fgets(validationNumber, sizeof(validationNumber), stdin);
+    vote("14051985/8934", "32");
 
-    if(validationNumber[strlen(validationNumber)] == '\n'){
-        getchar();
-    }
-    stringLengthValidation(14, validationNumber);
+    // printf("Enter your validation number:\n");
+    // fgets(validationNumber, sizeof(validationNumber), stdin);
 
-    if(stringExistenceValidation("Resources/People", validationNumber, 13) != 0){
-        fprintf(stderr, "ID not found...\n");
-        exit(EXIT_FAILURE);
-    }
+    // if(validationNumber[strlen(validationNumber)] == '\n'){
+    //     getchar();
+    // }
+    // stringLengthValidation(14, validationNumber);
 
-    printf("\nEnter the number of your candidate:\n");
-    fgets(candidateNumber, sizeof(candidateNumber), stdin);
+    // if(stringExistenceValidation("Resources/People", validationNumber, 13) != 0){
+    //     fprintf(stderr, "ID not found...\n");
+    //     exit(EXIT_FAILURE);
+    // }
 
-    if(candidateNumber[strlen(candidateNumber)] == '\n'){
-        getchar();
-    }
-    stringLengthValidation(5, candidateNumber);
+    // printf("\nEnter the number of your candidate:\n");
+    // fgets(candidateNumber, sizeof(candidateNumber), stdin);
 
-    if(stringExistenceValidation("Resources/Candidates", candidateNumber, 4) != 0){
-        fprintf(stderr, "Candidate not found...\n");
-        exit(EXIT_FAILURE);
-    }
+    // if(candidateNumber[strlen(candidateNumber)] == '\n'){
+    //     getchar();
+    // }
+    // stringLengthValidation(5, candidateNumber);
+
+    // if(stringExistenceValidation("Resources/Candidates", candidateNumber, 4) != 0){
+    //     fprintf(stderr, "Candidate not found...\n");
+    //     exit(EXIT_FAILURE);
+    // }
 
     exit(EXIT_SUCCESS);
 }
@@ -73,9 +76,51 @@ int stringExistenceValidation(char *filePath, char *string, int charToCompare){
             i++;
         }
         if(strncmp(data[2], string, charToCompare) == 0){
+            fclose(file);
             return 0;
         }
     }
 
+    fclose(file);
     return 1;
+}
+
+void vote(char *validationNumber, char *candidateNumber){
+    FILE *people;
+    FILE *candidates;
+    FILE *foo;
+
+    people = fopen("Resources/People", "r");
+    foo = fopen("Resources/foo", "w");
+
+    char *data[INPUT_BUFFER];
+    char buffer[INPUT_BUFFER];
+    int lineTracker = 0;
+    int dataTracker;
+    char *token;
+    char *tempData[4];
+
+    while(fgets(buffer, INPUT_BUFFER, people)){
+        dataTracker = 0;
+        data[lineTracker] = buffer;
+
+        token = strtok(data[lineTracker], ",");
+        while(token != NULL){
+            tempData[dataTracker] = token;
+            token = strtok(NULL, ",");
+            dataTracker++;
+        }
+        if(strncmp(tempData[2], validationNumber, 13) == 0){
+            strcpy(tempData[3], "1\n");
+        }
+            
+        fprintf(foo, "%s,%s,%s,%s", tempData[0], tempData[1], tempData[2], tempData[3]);
+        lineTracker++;
+    }
+    fclose(foo);
+    fclose(people);
+
+    fopen(foo, "r");
+    fopen(people, "w");
+    
 }
